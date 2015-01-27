@@ -6,7 +6,7 @@ from buzu.items import BuzuItem
 
 class SchedulesSpider(scrapy.Spider):
     name = "schedules"
-    allowed_domains = ["sincolfeira.com.br/"]
+    allowed_domains = ["sincolfeira.com.br"]
     start_urls = (
         'http://www.sincolfeira.com.br/meuponto.php',
     )
@@ -25,7 +25,7 @@ class SchedulesSpider(scrapy.Spider):
         print 'hue1'
         for schedule_url in response.xpath('//table[@class="textos"]//tr//td[3]//a//@href').extract():
             protocol = 'http://'
-            domain = self.allowed_domains[0]
+            domain = self.allowed_domains[0]+'/'
             yield protocol + domain + schedule_url
 
     # Parse Schedule Page
