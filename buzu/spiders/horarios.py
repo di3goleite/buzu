@@ -1,27 +1,38 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
+from buzu.items import BuzuItem
 
 class HorariosSpider(scrapy.Spider):
     name = "horarios"
     allowed_domains = ["sincolfeira.com.br"]
     start_urls = (
-        'http://www.sincolfeira.com.br/meuponto.php',
+        'http://www.sincolfeira.com.br/horarios/cidadenova-cis-dias-uteis.html',
+        #'http://www.sincolfeira.com.br/horarios/genipapo-dias-uteis.html',
     )
 
     def parse(self, response):
-        schedule_urls = self.get_schedule_urls(response)
+        header = response.xpath('//table//tr[1]//td/text()').extract()[1:]
 
-        for schedule_url in schedule_urls:
-            yield Request(schedule_url, callback=self.parse_schedule)
+        items = []
+        cars = []
 
-    def get_schedule_urls(self, response):
-        hxs = HtmlXPathSelector(response)
+        for i in range(len(header)):
+            if('Carro' in header[i] and i!=0):
+                cars.append(i)
 
-        for path in hxs.select("//table[@class='textos']//tr//td[3]//a//@href").extract:
-            protocol = 'http://'
-            domain = self.allowed_domain[0]
-            yield protocol + domain + path
+            if(str(header[i]) == ' '):
+                header[i] = response.xpath('//table//tr[1]//td//span/text()').extract()
 
-    def parse_schedule(self, response):
-        pass
+        for sel in response.xpath('//table//tr')[1:]:
+            schedule = sel.xpath('td/text()').extract()[1:]
+
+            for i in cars:
+                del schedule[i]
+
+            item = BuzuItem()
+            item['schedule'] = schedule
+
+            items.append(item)
+
+        return items
