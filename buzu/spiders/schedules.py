@@ -1,27 +1,36 @@
 # -*- coding: utf-8 -*-
 import scrapy
+from scrapy.http import Request
 
 from buzu.items import BuzuItem
 
 class SchedulesSpider(scrapy.Spider):
     name = "schedules"
-    allowed_domains = ["sincolfeira.com.br"]
+    allowed_domains = ["sincolfeira.com.br/"]
     start_urls = (
         'http://www.sincolfeira.com.br/meuponto.php',
     )
 
     # Main parse funcion
-    def parse(self, parse):
+    def parse(self, response):
         schedules_urls = self.get_schedules_urls(response)
+        
+        # Parse schedule_url page and return a json
+        for schedule_url in schedules_urls:
+            print 'hue2'
+            yield Request(schedule_url, callback=self.parse_schedule)
 
     # Get all URLs from MeuPonto page
     def get_schedules_urls(self, response):
-        for schedule_url in response.xpath('//table[@class="textos"]//tr//td[3]//a//@href'):
-            yield Request(schedule_url, callback=self.parse_schedule)
-
+        print 'hue1'
+        for schedule_url in response.xpath('//table[@class="textos"]//tr//td[3]//a//@href').extract():
+            protocol = 'http://'
+            domain = self.allowed_domains[0]
+            yield protocol + domain + schedule_url
 
     # Parse Schedule Page
     def parse_schedule(self, response):
+        print 'hue3'
         header = response.xpath('//table//tr[1]//td/text()').extract()[1:]
         items = []
         cars = []
