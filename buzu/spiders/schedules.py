@@ -17,12 +17,10 @@ class SchedulesSpider(scrapy.Spider):
         
         # Parse schedule_url page and return a json
         for schedule_url in schedules_urls:
-            print 'hue2'
             yield Request(schedule_url, callback=self.parse_schedule)
 
     # Get all URLs from MeuPonto page
     def get_schedules_urls(self, response):
-        print 'hue1'
         for schedule_url in response.xpath('//table[@class="textos"]//tr//td[3]//a//@href').extract():
             protocol = 'http://'
             domain = self.allowed_domains[0]+'/'
@@ -30,7 +28,6 @@ class SchedulesSpider(scrapy.Spider):
 
     # Parse Schedule Page
     def parse_schedule(self, response):
-        print 'hue3'
         header = response.xpath('//table//tr[1]//td/text()').extract()[1:]
         items = []
         cars = []
