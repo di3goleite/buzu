@@ -7,12 +7,21 @@ class SchedulesSpider(scrapy.Spider):
     name = "schedules"
     allowed_domains = ["sincolfeira.com.br"]
     start_urls = (
-        'http://www.sincolfeira.com.br/horarios/cidadenova-cis-dias-uteis.html',
-        #'http://www.sincolfeira.com.br/horarios/genipapo-dias-uteis.html',
+        'http://www.sincolfeira.com.br/meuponto.php',
     )
 
+    # Main parse funcion
+    def parse(self, parse):
+        schedules_urls = self.get_schedules_urls(response)
+
+    # Get all URLs from MeuPonto page
+    def get_schedules_urls(self, response):
+        for schedule_url in response.xpath('//table[@class="textos"]//tr//td[3]//a//@href'):
+            yield Request(schedule_url, callback=self.parse_schedule)
+
+
     # Parse Schedule Page
-    def parse(self, response):
+    def parse_schedule(self, response):
         header = response.xpath('//table//tr[1]//td/text()').extract()[1:]
         items = []
         cars = []
