@@ -21,7 +21,7 @@ class HorariosSpider(scrapy.Spider):
             if('Carro' in header[i] and i!=0):
                 cars.append(i)
 
-            if(str(header[i]) == ' '):
+            if(header[i] == ' '):
                 header[i] = response.xpath('//table//tr[1]//td//span/text()').extract()
 
         for sel in response.xpath('//table//tr')[1:]:
