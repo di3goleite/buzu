@@ -21,7 +21,7 @@ class SchedulesSpider(scrapy.Spider):
 
     # Get all URLs from MeuPonto page
     def get_schedules_urls(self, response):
-        for schedule_url in response.xpath('//table[@class="textos"]//tr//td[3]//a//@href').extract():
+        for schedule_url in response.xpath('//table[@class="textos"]//tr//td//a[@class="textos_p"]//@href').extract():
             protocol = 'http://'
             domain = self.allowed_domains[0]+'/'
             yield protocol + domain + schedule_url
