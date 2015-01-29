@@ -13,4 +13,5 @@ class BuzuItem(scrapy.Item):
     #route_name = scrapy.Field()
     #terminals = scrapy.Field()
     #type = scrapy.Field()
+    #source = scrapy.Field()
     schedule = scrapy.Field()

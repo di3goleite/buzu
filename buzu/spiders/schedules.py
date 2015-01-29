@@ -17,6 +17,9 @@ class SchedulesSpider(scrapy.Spider):
         
         # Parse schedule_url page and return a json
         for schedule_url in schedules_urls:
+            if schedule_url[:9] != 'horarios/':
+                schedule_url = 'horarios/'+schedule_url
+
             yield Request(schedule_url, callback=self.parse_schedule)
 
     # Get all URLs from MeuPonto page
