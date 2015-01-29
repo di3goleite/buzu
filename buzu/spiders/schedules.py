@@ -25,6 +25,7 @@ class SchedulesSpider(scrapy.Spider):
             protocol = 'http://'
             domain = self.allowed_domains[0]+'/'
             
+            # Add horarios string on url, if don't have this
             if schedule_url[:9] != 'horarios/':
                 schedule_url = 'horarios/'+schedule_url
 
@@ -36,7 +37,14 @@ class SchedulesSpider(scrapy.Spider):
         items = []
         cars = []
 
+        # Create a new BuzuItem
+        item = BuzuItem()
+        item['route'] = response.xpath('//h2[@class="textos_m"]/text()').extract()
+        item['source'] = response.url[35:]
+        item['terminals'] = header
+
         for i in range(len(header)):
+            
             # Remove Car columns
             if('Carro' in header[i] and i!=0):
                 cars.append(i)
@@ -53,10 +61,10 @@ class SchedulesSpider(scrapy.Spider):
             for i in cars:
                 del schedule[i]
 
-            # Create a new BuzuItem
-            item = BuzuItem()
+            # Add schedule of buzu
             item['schedule'] = schedule
 
             items.append(item)
+            item = BuzuItem()
 
         return items

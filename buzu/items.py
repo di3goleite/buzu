@@ -9,9 +9,7 @@ import scrapy
 
 
 class BuzuItem(scrapy.Item):
-    #route_number = scrapy.Field()
-    #route_name = scrapy.Field()
-    #terminals = scrapy.Field()
-    #type = scrapy.Field()
-    #source = scrapy.Field()
+    route = scrapy.Field()
+    source = scrapy.Field()
+    terminals = scrapy.Field()
     schedule = scrapy.Field()
