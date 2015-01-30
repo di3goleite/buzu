@@ -33,18 +33,11 @@ class SchedulesSpider(scrapy.Spider):
 
     # Parse Schedule Page
     def parse_schedule(self, response):
-        header = response.xpath('//table//tr[1]//td/text()').extract()[1:]
-        items = []
+        header = response.xpath('//table//tr[1]//td[@class="style1"]/text()').extract()[1:]
+        schedule = []
         cars = []
 
-        # Create a new BuzuItem
-        item = BuzuItem()
-        item['route'] = response.xpath('//h2[@class="textos_m"]/text()').extract()
-        item['source'] = response.url[35:]
-        item['terminals'] = header
-
         for i in range(len(header)):
-            
             # Remove Car columns
             if('Carro' in header[i] and i!=0):
                 cars.append(i)
@@ -52,19 +45,25 @@ class SchedulesSpider(scrapy.Spider):
             # WTF Sincol
             if(header[i] == ' '):
                 header[i] = response.xpath('//table//tr[1]//td//span/text()').extract()
+        
+        # Create a new BuzuItem
+        item = BuzuItem()
+        item['route'] = response.xpath('//h2[@class="textos_m"]/text()').extract()
+        item['source'] = response.url[35:]
+        item['terminals'] = header
 
         # Extract schedule
         for sel in response.xpath('//table//tr')[1:]:
-            schedule = sel.xpath('td/text()').extract()[1:]
+            time = sel.xpath('td/text()').extract()[1:]
 
             # Remove car column from schedule
             for i in cars:
-                del schedule[i]
+                del time[i]
 
-            # Add schedule of buzu
-            item['schedule'] = schedule
+            # Add stoptime on schedule array
+            schedule.append(time)
+        
+        # Add schedule of buzu
+        item['schedule'] = schedule
 
-            items.append(item)
-            item = BuzuItem()
-
-        return items
+        return item
