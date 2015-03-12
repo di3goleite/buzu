@@ -14,7 +14,7 @@ class SchedulesSpider(scrapy.Spider):
     # Main parse funcion
     def parse(self, response):
         schedules_urls = self.get_schedules_urls(response)
-        
+
         # Parse schedule_url page and return a json
         for schedule_url in schedules_urls:
             yield Request(schedule_url, callback=self.parse_schedule)
@@ -24,7 +24,7 @@ class SchedulesSpider(scrapy.Spider):
         for schedule_url in response.xpath('//table[@class="textos"]//tr//td//a[@class="textos_p"]//@href').extract():
             protocol = 'http://'
             domain = self.allowed_domains[0]+'/'
-            
+
             # Add horarios string on url, if don't have this
             if schedule_url[:9] != 'horarios/':
                 schedule_url = 'horarios/'+schedule_url
@@ -45,11 +45,11 @@ class SchedulesSpider(scrapy.Spider):
             # WTF Sincol
             if(header[i] == ' '):
                 header[i] = response.xpath('//table//tr[1]//td//span/text()').extract()
-        
+
         # Create a new BuzuItem
         item = BuzuItem()
         item['route'] = response.xpath('//h2[@class="textos_m"]/text()').extract()
-        item['source'] = response.url[35:]
+        item['source'] = response.url[35:-5]
         item['terminals'] = header
 
         # Extract schedule
@@ -62,7 +62,7 @@ class SchedulesSpider(scrapy.Spider):
 
             # Add stoptime on schedule array
             schedule.append(time)
-        
+
         # Add schedule of buzu
         item['schedule'] = schedule
 
