@@ -48,7 +48,14 @@ class SchedulesSpider(scrapy.Spider):
 
         # Create a new BuzuItem
         item = BuzuItem()
-        item['route'] = response.xpath('//h2[@class="textos_m"]/text()').extract()
+        item['route'] = response.xpath('//h2[@class="textos_m"]/text()').extract()[0]
+
+        span = response.xpath('//h2[@class="textos_m"]/span/text()').extract()
+
+        # WTF Sincol again
+        if len(span) > 0:
+            item['route'] = item['route'][0] + span[0]
+
         item['source'] = response.url[35:-5]
         item['terminals'] = header
 
