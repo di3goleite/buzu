@@ -5,13 +5,13 @@ from scrapy.http import Request
 from buzu.items import BuzuItem
 
 class SchedulesSpider(scrapy.Spider):
-    name = "schedules"
+    name = "schedule"
     allowed_domains = ["sincolfeira.com.br"]
     start_urls = (
         'http://www.sincolfeira.com.br/meuponto.php',
     )
 
-    # Main parse funcion
+    # Main parse function
     def parse(self, response):
         schedules_urls = self.get_schedules_urls(response)
 

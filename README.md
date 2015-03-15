@@ -3,5 +3,5 @@
 ## Execute:
 
 ```sh
-scrapy crawl schedules -o schedule.json -t json
+rm -rf schedule.json | scrapy crawl schedule -o schedule.json -t json
 ```
